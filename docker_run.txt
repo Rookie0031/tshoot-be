@@ -1,0 +1,30 @@
+# Run postgres container
+docker run --name my-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
+
+docker exec -it my-postgres psql -U postgres
+
+-- 데이터베이스 생성
+CREATE DATABASE tshoot;
+
+-- 데이터베이스에 접속
+\c tshoot
+
+-- Users 테이블 생성
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TroubleshootingRecords 테이블 생성
+CREATE TABLE TroubleshootingRecords (
+    record_id SERIAL PRIMARY KEY,
+    user_id INT,
+    issue_type VARCHAR(255),
+    issue_description TEXT,
+    resolution TEXT,
+    additional_study TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
