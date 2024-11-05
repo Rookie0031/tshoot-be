@@ -3,7 +3,7 @@ import { Field } from './trouble.entity';
 
 export class CreateTroubleDto {
   @IsString()
-  userId: string;  // userId 추가
+  userId: string;  // userId를 DTO에 포함
 
   @IsDateString()
   date: string;
@@ -21,19 +21,4 @@ export class CreateTroubleDto {
   solve: string;
 }
 
-export class UpdateTroubleDto {
-  @IsDateString()
-  date: string;
-
-  @IsEnum(Field)
-  field: Field;
-
-  @IsString()
-  problem: string;
-
-  @IsString()
-  try: string;
-
-  @IsString()
-  solve: string;
-}
+export class UpdateTroubleDto extends CreateTroubleDto {}

@@ -4,7 +4,7 @@ import { CreateTroubleDto, UpdateTroubleDto } from './trouble.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 
 @Controller('api/troubles')
-@UseGuards(JwtAuthGuard) // 모든 라우트에 JWT 인증 적용
+@UseGuards(JwtAuthGuard)
 export class TroubleController {
   constructor(private readonly troubleService: TroubleService) {}
 
@@ -14,23 +14,36 @@ export class TroubleController {
   }
 
   @Get()
-  findAll(@Query('category') category: string, @Query('userId') userId: string) {
-    return this.troubleService.findAll(category, userId);
+  findAll(
+    @Query('category') category: string,
+    @Query('userId') userId: string
+  ) {
+    return this.troubleService.findAll(userId, category);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.troubleService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: string,
+    @Query('userId') userId: string
+  ) {
+    return this.troubleService.findOne(id, userId);
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateTroubleDto: UpdateTroubleDto) {
-    return this.troubleService.update(id, updateTroubleDto);
+  update(
+    @Param('id', ParseIntPipe) id: string, 
+    @Body() updateTroubleDto: UpdateTroubleDto
+  ) {
+    const userId = updateTroubleDto.userId;
+    return this.troubleService.update(id, updateTroubleDto, userId);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', ParseIntPipe) id: string) {
-    return this.troubleService.remove(id);
+  remove(
+    @Param('id', ParseIntPipe) id: string,
+    @Query('userId') userId: string
+  ) {
+    return this.troubleService.remove(id, userId);
   }
 } 

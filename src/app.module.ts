@@ -5,7 +5,7 @@ import { AppService } from './app.service';import { UserModule } from './User/Us
 import { User } from './User/user.entity';
 import { TroubleModule } from './troubles/trouble.module';
 import { AuthModule } from './auth/auth.module';
-
+import { Trouble } from './troubles/trouble.entity';
 @Module({   
   imports: [
     TypeOrmModule.forRoot({
@@ -15,8 +15,8 @@ import { AuthModule } from './auth/auth.module';
       username: 'postgres',
       password: 'mysecretpassword', 
       database: 'tshoot',
-      entities:[User],
-      synchronize: true, // 개발 환경에서만 사용, 자동으로 데이터베이스 스키마를 동기화
+      entities:[User, Trouble],
+      synchronize: false, // 개발 환경에서만 사용, 자동으로 데이터베이스 스키마를 동기화
     }),
     UserModule,
     TroubleModule,

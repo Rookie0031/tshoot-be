@@ -12,32 +12,32 @@ export class TroubleService {
   ) {}
 
   async create(createTroubleDto: CreateTroubleDto): Promise<Trouble> {
-    const trouble = this.troubleRepository.create({
-      ...createTroubleDto,
-      userId: createTroubleDto.userId
-    });
-    
-    console.log('Creating trouble for user:', createTroubleDto.userId);
+    const trouble = this.troubleRepository.create(createTroubleDto);
     return await this.troubleRepository.save(trouble);
   }
 
-  async findAll(category?: string, userId?: string): Promise<Trouble[]> {
+  async findAll(userId: string, category?: string): Promise<Trouble[]> {
     const query = this.troubleRepository.createQueryBuilder('trouble');
     
-    if (userId) {
-      query.where('trouble.userId = :userId', { userId });
-    }
+    // user_id 컬럼명 사용
+    query.where('trouble.user_id = :userId', { userId });
     
     if (category) {
       query.andWhere('trouble.field = :category', { category });
     }
     
+    // 생성일 기준 내림차순 정렬 추가
+    query.orderBy('trouble.created_at', 'DESC');
+    
     return await query.getMany();
   }
 
-  async findOne(id: string): Promise<Trouble> {
+  async findOne(id: string, userId: string): Promise<Trouble> {
     const trouble = await this.troubleRepository.findOne({ 
-      where: { id: parseInt(id) } // string을 number로 변환
+      where: { 
+        id: parseInt(id),
+        userId 
+      } 
     });
     
     if (!trouble) {
@@ -46,16 +46,14 @@ export class TroubleService {
     return trouble;
   }
 
-  async update(id: string, updateTroubleDto: UpdateTroubleDto): Promise<Trouble> {
-    const trouble = await this.findOne(id);
+  async update(id: string, updateTroubleDto: UpdateTroubleDto, userId: string): Promise<Trouble> {
+    const trouble = await this.findOne(id, userId);
     Object.assign(trouble, updateTroubleDto);
     return await this.troubleRepository.save(trouble);
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.troubleRepository.delete(parseInt(id)); // string을 number로 변환
-    if (result.affected === 0) {
-      throw new NotFoundException(`Trouble with ID ${id} not found`);
-    }
+  async remove(id: string, userId: string): Promise<void> {
+    const trouble = await this.findOne(id, userId);
+    await this.troubleRepository.remove(trouble);
   }
 }

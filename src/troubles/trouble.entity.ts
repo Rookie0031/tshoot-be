@@ -13,35 +13,40 @@ export enum Field {
 
 @Entity('troubleshootingrecords')
 export class Trouble {
-  @PrimaryGeneratedColumn({ name: 'record_id' })
-  id: number;  // PostgreSQL sequence는 보통 number 타입입니다
+  @PrimaryGeneratedColumn('increment', { name: 'record_id' })
+  id: number;
 
-  @Column({ type: 'date' })
-  date: string;  // YYYY-MM-DD 형식
+  @Column({ 
+    name: 'date',
+    type: 'date',
+    nullable: true
+  })
+  date: string;
 
   @Column({
     type: 'enum',
     enum: Field,
+    name: 'field'
   })
   field: Field;
 
-  @Column('text')
+  @Column({ name: 'problem' })
   problem: string;
 
-  @Column('text')
+  @Column({ name: 'try' })
   try: string;
 
-  @Column('text')
+  @Column({ name: 'solve' })
   solve: string;
+
+  @Column({ name: 'user_id' })
+  userId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @Column({ name: 'user_id' })
-  userId: string;
 
   @ManyToOne(() => User)
   user: User;

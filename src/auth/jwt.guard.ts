@@ -19,7 +19,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = await this.jwtService.verify(token);
       request.user = payload;
-      console.log('🔑 JWT 인증 성공:', payload.email);
+      console.log('Req 수신 및 JWT 인증 성공:', payload.email);
       return true;
     } catch {
       throw new UnauthorizedException('유효하지 않은 토큰입니다');
